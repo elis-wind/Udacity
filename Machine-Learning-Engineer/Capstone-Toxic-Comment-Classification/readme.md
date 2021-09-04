@@ -10,6 +10,8 @@ The initial project and data come from the [Conversation AI team](https://conver
 
 The data is available on [Kaggle competition](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data)
 
+Pretrained GloVe word embeddings can be found from [here](https://www.kaggle.com/danielwillgeorge/glove6b100dtxt)
+
 ## Project requirements
 
 numpy
