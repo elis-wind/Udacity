@@ -1,4 +1,4 @@
-# Toxic comment classification projet
+# Toxic comment classification project
 
 ## Problem statement
 
