@@ -13,11 +13,19 @@ The data is available on [Kaggle competition](https://www.kaggle.com/c/jigsaw-to
 ## Project requirements
 
 numpy
+
 pandas
+
 matplotlib.pyplot
+
 seaborn
+
 sklearn
+
 keras
+
 tensorflow
+
 wordcloud
+
 imblearn
