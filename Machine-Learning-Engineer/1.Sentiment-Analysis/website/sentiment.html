@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Analyse d'opinion</title>
+        <meta charset="utf-8">
+        <meta name="viewport"  content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <style type="text/css">
+            body{
+        margin:0;
+        padding: 0;
+                }
+
+            div.container-fluid{
+        width:"auto";
+        margin-right: 20%;
+        margin-left: 20%;
+                }
+            body {
+        background-position:right,left;
+        background-size: 20%,20%;
+        background-image: url('film2.jpeg'),url('film1.jpeg');
+        background-repeat: no-repeat,no-repeat;
+                }
+        </style>
+
+        <script>
+         "use strict";
+         function submitForm(oFormElement) {
+             var xhr = new XMLHttpRequest();
+             xhr.onload = function() {
+                 var result = parseFloat(xhr.responseText);
+                 var resultElement = document.getElementById('result');
+                 if (result == 0) {
+                     resultElement.className = 'bg-danger';
+                     resultElement.innerHTML = 'Votre avis est négatif !';
+                 } else {
+                     resultElement.className = 'bg-success';
+                     resultElement.innerHTML = 'Votre avis est positif !';
+                 }
+             }
+             xhr.open (oFormElement.method, oFormElement.action, true);
+             var review = document.getElementById('review');
+             xhr.send (review.value);
+             return false;
+         }
+        </script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Amethysta&family=Architects+Daughter&family=Crimson+Pro:wght@300&family=Indie+Flower&family=Lora:ital@1&display=swap" rel="stylesheet">
+
+    </head>
+    <body style="background-color:rgb(236, 236, 236);">
+        <div class="container-fluid">
+            <h1 style="font-family:'Amethysta',serif; font-size: 40px; text-align: center;">Analyse d'opinion</h1>
+            <h2 style="font-family:'Amethysta',sans-serif; font-size: 30px; text-align: center;">Critique positive ou négative ?</h2>
+            <center><img src="sentiment.jpg" alt="sentiments" width="400" height="auto"></center>
+            <!-- <p style="font-family:'Architects Daughter',cursive; color:Blue; font-size: 20px;">Architects Daughter Entrez le texte ici pour découvrir ce qu'en pense l'ordinateur!</p> -->
+            <!-- <p style="font-family:'Indie Flower',cursive; color:Blue; font-size: 20px;">Indie Flower Entrez le texte ici pour découvrir ce qu'en pense l'ordinateur!</p>
+            <p style="font-family:'Crimson Pro',serif; color:Blue; font-size: 20px;">Crimson Pro Entrez le texte ici pour découvrir ce qu'en pense l'ordinateur!</p> -->
+            <p style="font-family:'Lora',serif; font-size: 22px; text-align: center;">Entrez votre critique d'un film ici et découvrez ce qu'en pense l'ordinateur !</p>
+            <form method="POST"
+                  action="https://mkbj1khex2.execute-api.eu-west-3.amazonaws.com/prod"
+                  onsubmit="return submitForm(this);" >                     <!-- HERE IS WHERE YOU NEED TO ENTER THE API URL -->
+                <div class="form-group">
+                    <label for="review"> </label>
+                    <textarea class="form-control"  rows="5" id="review">...</textarea>
+                </div>
+                <button type="submit" class="btn btn-default">Entrer</button>
+            </form>
+            <h2 class="bg-success" id="result"></h2>
+        </div>
+    </body>
+</html>
