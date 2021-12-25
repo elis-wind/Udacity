@@ -29,3 +29,22 @@ This case study on gender bias will demonstrate how grouping data differently fo
 With bootstrap sampling
 
 ## Hypothesis testing
+
+- With cnfidence intervals
+- Simulating from the null
+- Calculating the p-value
+- Bonferoni correction for multiple tests
+
+## A-B tests
+
+- With single metric
+- With multiple metrics
+
+## Regression
+
+## Multiple linear Regression 
+
+## Logistic Regression
+
+
+##
