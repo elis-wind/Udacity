@@ -42,6 +42,11 @@ With bootstrap sampling
 
 ## Regression
 
+- Simple linear regression with Statsmodels
+- Coefficients interpretation
+
 ## Multiple linear Regression 
+
+- Dummy variables
 
 ## Logistic Regression
