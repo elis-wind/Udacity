@@ -45,6 +45,3 @@ With bootstrap sampling
 ## Multiple linear Regression 
 
 ## Logistic Regression
-
-
-##
