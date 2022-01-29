@@ -12,13 +12,13 @@ In this project, we will be working on the following three datasets.
 
 The WeRateDogs Twitter archive contains basic tweet data for all 5000+ of their tweets, but not everything. One column the archive does contain though: each tweet's text, from where rating, dog name, and dog "stage" (i.e. doggo, floofer, pupper, and puppo) were extracted to make this Twitter archive "enhanced." Of the 5000+ tweets, tweets with ratings only (there are 2356) were preliminary filtered.
 
-<img src="Tweets.png" | width=1000>
+<img src="Tweets.png">
 
 *The extracted data from each tweet's text*
 
 The data were extracted programmatically, but the ratings probably aren't all correct. Same goes for the dog names and probably dog stages (see below for more information on these) too. We will need to assess and clean these columns if we want to use them for analysis and visualization.
 
-<img src="Dogtionary.png" | width=1000>
+<img src="Dogtionary.png">
 
 *Dogtionary from WeRateDogs book*
 
@@ -32,7 +32,7 @@ Back to the basic-ness of Twitter archives: retweet count and favorite count are
 
 One more cool thing: every image in the WeRateDogs Twitter archive was run through a [neural network](https://www.youtube.com/watch?v=2-Ol7ZB0MmU) that can classify breeds of dogs. The results: a table full of image predictions (the top three only) alongside each tweet ID, image URL, and the image number that corresponded to the most confident prediction (numbered 1 to 4 since tweets can have up to four images).
 
-<img src="Tweet-image-prediction.png" | width=1000>
+<img src="Tweet-image-prediction.png">
 
 *Tweet image prediction data*
 
@@ -50,7 +50,7 @@ etc.
 
 And the #1 prediction for the image in that tweet was spot on:
 
-<img src="golden-retriever.png" | height=500>
+<img src="golden-retriever.png">
 
 *A golden retriever named Stuart*
 
