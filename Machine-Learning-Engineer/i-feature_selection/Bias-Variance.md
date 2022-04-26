@@ -10,4 +10,11 @@ A high variance algorithm is extremely perceptive to data. It can only replicate
 
 ## A bias-variance trade-off
 
-In reality we want something in the middle, we want an algorithm that has some authority to generalize but which is still open to listen to the data. 
+In reality we want something in the middle, we want an algorithm that has some authority to generalize but which is still open to listen to the data (with large R², but low SSE). 
+
+![bias-variance](bias-variance.png)
+
+## Regularization
+
+
+
