@@ -16,7 +16,15 @@ import joblib
 
 enron_data = joblib.load(open("../final_project/final_project_dataset.pkl", "rb"))
 
+#print(enron_data.keys())
+#print(list(enron_data.values())[0])
 print("Number of people in the data set: ", len(enron_data))
 print("Number of features available for each person: ", len(list(enron_data.values())[0])) 
 print("Number of persons of interest in the data set: ", 
     sum(enron_data[pers]['poi'] for pers in enron_data if enron_data[pers]['poi'] == 1))
+print("The total value of the stock belonging to James Prentice is ", 
+    enron_data["PRENTICE JAMES"]["total_stock_value"])
+print("Number of messages from Wesley Colwell to persons of interest: ", 
+    enron_data["COLWELL WESLEY"]["from_this_person_to_poi"])
+print("The value of stock options exercised by Jeffrey K Skilling is ", 
+    enron_data["SKILLING JEFFREY K"]["exercised_stock_options"])
