@@ -28,3 +28,12 @@ print("Number of messages from Wesley Colwell to persons of interest: ",
     enron_data["COLWELL WESLEY"]["from_this_person_to_poi"])
 print("The value of stock options exercised by Jeffrey K Skilling is ", 
     enron_data["SKILLING JEFFREY K"]["exercised_stock_options"])
+print("The CEO of Enron during much of the time fraud was ongoing: Jeffrey Skilling")
+print("The chairman of Enron board of directors during much of the time fraud was ongoing: Kenneth Lay")
+print("The CFO of Enron during much of the time fraud was ongoing: Andrew Fastow ")
+
+most_money = max( [ (enron_data[pers]['total_payments'],pers) for pers in ["SKILLING JEFFREY K","LAY KENNETH L", "FASTOW ANDREW S"] ] )
+print("Of these three individuals, {} took home the most money ({})".format(most_money[1], most_money[0]))
+
+print("Persons with identified salary: ", len([enron_data[pers]['salary'] for pers in enron_data if enron_data[pers]['salary'] != 'NaN']))
+print("Persons with identified emails: ", len([enron_data[pers]['email_address'] for pers in enron_data if enron_data[pers]['email_address'] != 'NaN']))
