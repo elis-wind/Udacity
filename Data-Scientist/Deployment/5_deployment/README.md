@@ -57,8 +57,8 @@ For workspace users, the requirements.txt is already available in the exercise f
 
 - Initialize a git repository and make a commit:
 
-`# Run it just once, in the beginning`
-`git init`
+`# Run it just once, in the beginning`  
+`git init`  
 `# For the first time commit, you need to configure the git username and email:`  
 `git config --global user.email "you@example.com"`  
 `git config --global user.name "Your Name"`
