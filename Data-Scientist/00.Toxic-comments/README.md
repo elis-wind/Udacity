@@ -54,4 +54,4 @@ The repository is organized as follow:
 
 ## Results
 
-The main findings are communicated in Medium blogpost. 
+The main findings are communicated in [Medium blogpost](https://medium.com/@nbobkova174/toxic-comment-classification-84bb13013101). 
