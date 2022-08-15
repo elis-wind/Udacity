@@ -51,7 +51,13 @@ The repository is organized as follow:
 
 - **test_labels.csv.zip** - labels for the test data; value of -1 indicates it was not used for scoring.
 
+- **figures** - this directory contains all the figures which `Toxic_comments.ipynb` outputs.
+
 
 ## Results
 
-The main findings are communicated in [Medium blogpost](https://medium.com/@nbobkova174/toxic-comment-classification-84bb13013101). 
+The main findings are communicated in [Medium blogpost](https://medium.com/@nbobkova174/84bb13013101). 
+
+## Acknowledgments
+
+This study was performed on [data](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data) released by Jigsaw. We give credit to Hugging Face for their pretrained [BERT model](https://huggingface.co/docs/transformers/model_doc/bert) as well as for their useful [tutorials](https://huggingface.co/docs/transformers/training#finetune-a-pretrained-model) on fine-tuning. 
