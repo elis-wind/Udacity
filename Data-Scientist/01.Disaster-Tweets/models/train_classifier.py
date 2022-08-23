@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import classification_report, f1_score, accuracy_score
 import pickle
 
@@ -65,7 +65,7 @@ def build_model():
                 tokenizer=tokenize)),
             ('tfidf', TfidfTransformer()),
             ('clf', MultiOutputClassifier(
-                RandomForestClassifier())),
+                AdaBoostClassifier())),
         ])
 
     return pipeline
