@@ -1,36 +1,39 @@
 import json
 import plotly
 import pandas as pd
+import string
+from nltk.corpus import stopwords  
 
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+from plotly.graph_objs import Bar, Heatmap
+import joblib
 from sqlalchemy import create_engine
+
+
+skip_tokens = stopwords.words('english') + ["'s", "n't"] + list(string.punctuation)
 
 
 app = Flask(__name__)
 
 def tokenize(text):
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
+    lemm = WordNetLemmatizer()
+    
+    text = word_tokenize(text)
+    text = [lemm.lemmatize(x).lower().strip() for x in text]
+    text = filter(lambda x: x not in skip_tokens, text)
+    
+    return " ".join(text)
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('DisasterData', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/model.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -40,8 +43,12 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
+    genre_counts = df.groupby('genre').count()['message'].sort_values(ascending=False)
     genre_names = list(genre_counts.index)
+
+    categories = df._get_numeric_data().drop(columns='id')
+    category_counts = categories.sum(axis=0).sort_values(ascending=False)
+    category_names = list(category_counts.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -61,6 +68,26 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category",
+                    'tickangle': 25,
+                    'ticklen': 2
                 }
             }
         }
@@ -93,7 +120,7 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3001, debug=True)
 
 
 if __name__ == '__main__':
