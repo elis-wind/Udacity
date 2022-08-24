@@ -56,6 +56,7 @@ def clean_data(df):
     df = pd.concat([df, categories], axis=1)
     # drop duplicates
     df.drop_duplicates(keep="first", inplace=True)
+    df = df.query('related == 1 | related == 0')
 
     return df
 
