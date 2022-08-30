@@ -16405,7 +16405,7 @@ The top 10 recommendations for user 20 are the following article names:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><strong>Since there is no history about this user (we do not know his/her preferences), the best way would be to use Rank-Based method and to provide the new user with the most popular articles from our data base using <code>get_top_articles()</code> function. When this new user starts interacting with articles, we would get some data about him/her preferences and we could change the method to User-User based.</strong></p>
+<p><strong>Since there is no history about this user (we do not know his/her preferences), the best way would be to use Rank-Based method and to provide the new user with the most popular articles from our database using <code>get_top_articles()</code> function. When this new user starts interacting with articles, we would get some data about him/her preferences and we could change the method to User-User based.</strong></p>
 <p><strong>Another way to approach such a cold start problem might be using knowledge based or content based recommendation engine.</strong></p>
 
 </div>
@@ -17400,7 +17400,6 @@ jp-needs-light-background
     <span class="n">sum_errs_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err_train</span><span class="p">)</span>
     <span class="n">sum_errs_test</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err_test</span><span class="p">)</span>
     
-
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">num_latent_feats</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sum_errs_train</span><span class="p">)</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
@@ -17468,8 +17467,8 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><strong>The results show that the accuracy increases in training data set as the numer of latent features goes up. However, we observe an inverse correlation in test data: increasing latent features decreases the accuracy of predictions. One explanation might be that we overfit the training data. To overcome this issue we may use cross validation and use fewer latend features. Another problem is that we probably do not have enough data (only 20 items in test set) to make sound conclusions about the performance of our recommendation system based on matrix factorization.</strong></p>
-<p><strong>We might also want to run an A/B test to compare if different recommendation engines provide significantly better recommendations. One group of users may get recommendations based on collaborative filterning, another one - based on matrix factorisation.</strong></p>
+<p><strong>The results show that the accuracy increases in the training data set as the number of latent features goes up. However, we observe an inverse correlation in the test data: increasing latent features decreases the accuracy of predictions. One explanation might be that we overfit the training data. To overcome this issue we may use cross validation and use fewer latent features. Another problem is that we probably do not have enough data (only 20 items in the test set) to make sound conclusions about the performance of our recommendation system based on matrix factorization.</strong></p>
+<p><strong>We might also want to run an A/B test to compare if different recommendation engines provide significantly better recommendations. One group of users may get recommendations based on collaborative filtering, another one - based on matrix factorisation.</strong></p>
 
 </div>
 </div>
