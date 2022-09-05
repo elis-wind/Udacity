@@ -46,6 +46,8 @@ To evaluate all the models we use **accuracy score**, the [most famous classific
 
     - Our third model uses Transfer Learning as well, but with bottleneck features of the **Inception** model; it results in 77.75% accuracy.
 
+For more detailed results see this [Medium](https://medium.com/@nbobkova174/dog-classification-with-cnns-and-transfer-learning-6a45fa7024fd) blogpost.
+
 ## Libraries used
 
 ```
