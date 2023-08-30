@@ -7,6 +7,9 @@ from livelossplot import PlotLosses
 from livelossplot.outputs import MatplotlibPlot
 from torch.utils.data.sampler import SubsetRandomSampler
 from torchvision import datasets
+import torchvision.transforms as transforms
+import multiprocessing
+import random
 from tqdm import tqdm
 
 
@@ -437,3 +440,331 @@ def plot_confusion_matrix(pred, truth, classes):
     
 
     return confusion_matrix
+
+
+def get_data_loaders(batch_size, val_fraction=0.2):
+    
+    transform = transforms.ToTensor()
+    
+    num_workers = multiprocessing.cpu_count()
+    
+    # Get train, validation and test
+    
+    # Let's start with train and validation
+    trainval_data = datasets.MNIST(
+        root="data", train=True, download=True, transform=transform
+    )
+
+    # Split in train and validation
+    # NOTE: we set the generator with a fixed random seed for reproducibility
+    train_len = int(len(trainval_data) * (1 - val_fraction))
+    val_len = len(trainval_data) - train_len
+    print(f"Using {train_len} examples for training and {val_len} for validation")
+    train_subset, val_subset = torch.utils.data.random_split(
+        trainval_data, [train_len, val_len], generator=torch.Generator().manual_seed(42)
+    )
+
+    train_loader = torch.utils.data.DataLoader(
+        dataset=train_subset, shuffle=True, batch_size=batch_size, num_workers=num_workers
+    )
+    val_loader = torch.utils.data.DataLoader(
+        dataset=val_subset, shuffle=False, batch_size=batch_size, num_workers=num_workers
+    )
+
+    # Get test data
+    test_data = datasets.MNIST(root="data", train=False, download=True, transform=transform)
+    test_loader = torch.utils.data.DataLoader(
+        test_data, batch_size=batch_size, num_workers=num_workers
+    )
+    print(f"Using {len(test_data)} for testing")
+    
+    return {
+        'train': train_loader,
+        'valid': val_loader,
+        'test': test_loader
+    }
+
+
+def seed_all(seed=42):
+    
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    
+
+def anomaly_detection_display(df):
+    
+    df.sort_values(by='loss', ascending=False, inplace=True)
+    
+    fig, sub = plt.subplots()
+    df['loss'].hist(bins=100)
+    sub.set_yscale('log')
+    sub.set_xlabel("Score (loss)")
+    sub.set_ylabel("Counts per bin")
+    fig.suptitle("Distribution of score (loss)")
+    
+    fig, subs = plt.subplots(2, 20, figsize=(20, 3))
+
+    for img, sub in zip(df['image'].iloc[:20], subs[0].flatten()):
+        sub.imshow(img[0, ...], cmap='gray')
+        sub.axis("off")
+
+    for rec, sub in zip(df['reconstructed'].iloc[:20], subs[1].flatten()):
+        sub.imshow(rec[0, ...], cmap='gray')
+        sub.axis("off")
+
+    fig.suptitle("Most difficult to reconstruct")
+    subs[0][0].axis("on")
+    subs[0][0].set_xticks([])
+    subs[0][0].set_yticks([])
+    subs[0][0].set_ylabel("Input")
+
+    subs[1][0].axis("on")
+    subs[1][0].set_xticks([])
+    subs[1][0].set_yticks([])
+    _ = subs[1][0].set_ylabel("Reconst")
+    
+    fig, subs = plt.subplots(2, 20, figsize=(20, 3))
+
+    sample = df.iloc[7000:].sample(20)
+
+    for img, sub in zip(sample['image'], subs[0].flatten()):
+        sub.imshow(img[0, ...], cmap='gray')
+        sub.axis("off")
+
+    for rec, sub in zip(sample['reconstructed'], subs[1].flatten()):
+        sub.imshow(rec[0, ...], cmap='gray')
+        sub.axis("off")
+
+    fig.suptitle("Sample of in-distribution numbers")
+    subs[0][0].axis("on")
+    subs[0][0].set_xticks([])
+    subs[0][0].set_yticks([])
+    subs[0][0].set_ylabel("Input")
+
+    subs[1][0].axis("on")
+    subs[1][0].set_xticks([])
+    subs[1][0].set_yticks([])
+    _ = subs[1][0].set_ylabel("Reconst")
+
+
+seed = 42
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
+
+
+def get_data_location():
+    """
+    Find the location of the dataset, either locally or in the Udacity workspace
+    """
+
+    if os.path.exists("flowers"):
+        data_folder = "flowers"
+    elif os.path.exists("/data/DLND/C2/flowers"):
+        data_folder = "/data/DLND/C2/flowers"
+    else:
+        raise IOError("Please download the dataset first")
+
+    return data_folder
+
+
+# Compute image normalization
+def compute_mean_and_std():
+    """
+    Compute per-channel mean and std of the dataset (to be used in transforms.Normalize())
+    """
+
+    cache_file = "mean_and_std.pt"
+    if os.path.exists(cache_file):
+        print(f"Reusing cached mean and std")
+        d = torch.load(cache_file)
+
+        return d["mean"], d["std"]
+
+    folder = get_data_location()
+    ds = datasets.ImageFolder(
+        folder, transform=T.Compose([T.ToTensor()])
+    )
+    dl = torch.utils.data.DataLoader(
+        ds, batch_size=1, num_workers=multiprocessing.cpu_count()
+    )
+
+    mean = 0.0
+    for images, _ in tqdm(dl, total=len(ds), desc="Computing mean", ncols=80):
+        batch_samples = images.size(0)
+        images = images.view(batch_samples, images.size(1), -1)
+        mean += images.mean(2).sum(0)
+    mean = mean / len(dl.dataset)
+
+    var = 0.0
+    npix = 0
+    for images, _ in tqdm(dl, total=len(ds), desc="Computing std", ncols=80):
+        batch_samples = images.size(0)
+        images = images.view(batch_samples, images.size(1), -1)
+        var += ((images - mean.unsqueeze(1)) ** 2).sum([0, 2])
+        npix += images.nelement()
+
+    std = torch.sqrt(var / (npix / 3))
+
+    # Cache results so we don't need to redo the computation
+    torch.save({"mean": mean, "std": std}, cache_file)
+
+    return mean, std
+
+
+def get_transforms(rand_augment_magnitude):
+
+    # These are the per-channel mean and std of CIFAR-10 over the dataset
+    mean, std = compute_mean_and_std()
+
+    # Define our transformations
+    return {
+        "train": T.Compose(
+            [
+                # All images in CIFAR-10 are 32x32. We enlarge them a bit so we can then
+                # take a random crop
+                T.Resize(256),
+                
+                # take a random part of the image
+                T.RandomCrop(224),
+                
+                # Horizontal flip is not part of RandAugment according to the RandAugment
+                # paper
+                T.RandomHorizontalFlip(0.5),
+                
+                # RandAugment has 2 main parameters: how many transformations should be
+                # applied to each image, and the strength of these transformations. This
+                # latter parameter should be tuned through experiments: the higher the more
+                # the regularization effect
+                T.RandAugment(
+                    num_ops=2,
+                    magnitude=rand_augment_magnitude,
+                    interpolation=T.InterpolationMode.BILINEAR,
+                ),
+                T.ToTensor(),
+                T.Normalize(mean, std),
+            ]
+        ),
+        "valid": T.Compose(
+            [
+                # Both of these are useless, but we keep them because
+                # in a non-academic dataset you will need them
+                T.Resize(256),
+                T.CenterCrop(224),
+                T.ToTensor(),
+                T.Normalize(mean, std),
+            ]
+        )
+    }
+
+
+def get_data_loaders2(
+    batch_size: int = 32, valid_size: float = 0.2, num_workers: int = -1, limit: int = -1, rand_augment_magnitude: int = 9
+):
+    """
+    Create and returns the train_one_epoch, validation and test data loaders.
+
+    :param batch_size: size of the mini-batches
+    :param valid_size: fraction of the dataset to use for validation. For example 0.2
+                       means that 20% of the dataset will be used for validation
+    :param num_workers: number of workers to use in the data loaders. Use -1 to mean
+                        "use all my cores"
+    :param limit: maximum number of data points to consider
+    :return a dictionary with 3 keys: 'train_one_epoch', 'valid' and 'test' containing respectively the
+            train_one_epoch, validation and test data loaders
+    """
+
+    if num_workers == -1:
+        # Use all cores
+        num_workers = multiprocessing.cpu_count()
+
+    # We will fill this up later
+    data_loaders = {"train": None, "valid": None, "test": None}
+
+    base_path = Path(get_data_location())
+
+    # Compute mean and std of the dataset
+    mean, std = compute_mean_and_std()
+    print(f"Dataset mean: {mean}, std: {std}")
+
+    # YOUR CODE HERE:
+    # create 3 sets of data transforms: one for the training dataset,
+    # containing data augmentation, one for the validation dataset
+    # (without data augmentation) and one for the test set (again
+    # without augmentation)
+    # HINT: resize the image to 256 first, then crop them to 224, then add the
+    # appropriate transforms for that step
+    data_transforms = get_transforms(rand_augment_magnitude)
+#     data_transforms = {
+#         "train": transforms.Compose(
+#             # YOUR CODE HERE
+#             [  # -
+#                 transforms.Resize(256),  # -
+#                 transforms.RandomCrop(224, padding_mode="reflect", pad_if_needed=True),  # -
+#                 transforms.AutoAugment(transforms.AutoAugmentPolicy.IMAGENET),  # -
+#                 transforms.ToTensor(),  # -
+#                 transforms.Normalize(mean, std),  # -
+#             ]  # -
+#         ),
+#         "valid": transforms.Compose(
+#             # YOUR CODE HERE
+#             [  # -
+#                 transforms.Resize(256),  # -
+#                 transforms.CenterCrop(224),  # -
+#                 transforms.ToTensor(),  # -
+#                 transforms.Normalize(mean, std),  # -
+#             ]  # -
+#         )
+#     }
+
+    # Create train and validation datasets
+    train_data = datasets.ImageFolder(
+        base_path,
+        # YOUR CODE HERE: add the appropriate transform that you defined in
+        # the data_transforms dictionary
+        transform=data_transforms["train"]  # -
+    )
+    # The validation dataset is a split from the train_one_epoch dataset, so we read
+    # from the same folder, but we apply the transforms for validation
+    valid_data = datasets.ImageFolder(
+        base_path,
+        # YOUR CODE HERE: add the appropriate transform that you defined in
+        # the data_transforms dictionary
+        transform=data_transforms["valid"]  # -
+    )
+
+    # obtain training indices that will be used for validation
+    n_tot = len(train_data)
+    indices = torch.randperm(n_tot)
+
+    # If requested, limit the number of data points to consider
+    if limit > 0:
+        indices = indices[:limit]
+        n_tot = limit
+
+    split = int(math.ceil(valid_size * n_tot))
+    train_idx, valid_idx = indices[split:], indices[:split]
+
+    # define samplers for obtaining training and validation batches
+    train_sampler = torch.utils.data.SubsetRandomSampler(train_idx)
+    valid_sampler = torch.utils.data.SubsetRandomSampler(valid_idx)  # =
+
+    # prepare data loaders
+    data_loaders["train"] = torch.utils.data.DataLoader(
+        train_data,
+        batch_size=batch_size,
+        sampler=train_sampler,
+        num_workers=num_workers,
+    )
+    data_loaders["valid"] = torch.utils.data.DataLoader(
+        # YOUR CODE HERE
+        valid_data,  # -
+        batch_size=batch_size,  # -
+        sampler=valid_sampler,  # -
+        num_workers=num_workers,  # -
+    )
+
+    return data_loaders
