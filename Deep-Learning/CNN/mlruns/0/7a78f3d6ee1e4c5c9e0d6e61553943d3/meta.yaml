@@ -1,0 +1,15 @@
+artifact_uri: file:///home/natasha/Documents/Udacity/Deep-Learning/CNN/mlruns/0/7a78f3d6ee1e4c5c9e0d6e61553943d3/artifacts
+end_time: 1693406600215
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 7a78f3d6ee1e4c5c9e0d6e61553943d3
+run_uuid: 7a78f3d6ee1e4c5c9e0d6e61553943d3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1693399556343
+status: 3
+tags: []
+user_id: natasha
