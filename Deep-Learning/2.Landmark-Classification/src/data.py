@@ -58,7 +58,7 @@ def get_data_loaders(
         "valid": transforms.Compose(
             [
              transforms.Resize(256),
-             transforms.RandomCrop(224),
+             transforms.CenterCrop(224),
              transforms.ToTensor(),
              transforms.Normalize(mean, std),
             ]
@@ -66,7 +66,7 @@ def get_data_loaders(
         "test": transforms.Compose(
             [
              transforms.Resize(256),
-             transforms.RandomCrop(224),
+             transforms.CenterCrop(224),
              transforms.ToTensor(),
              transforms.Normalize(mean, std),
             ]

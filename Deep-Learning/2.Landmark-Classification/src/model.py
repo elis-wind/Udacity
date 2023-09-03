@@ -9,7 +9,6 @@ class MyModel(nn.Module):
 
         self.model = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
             
