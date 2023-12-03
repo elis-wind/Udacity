@@ -1,0 +1,3 @@
+TASK 01
+
+The complexity is O(1) since every time we need to get 1 item from the lists.
