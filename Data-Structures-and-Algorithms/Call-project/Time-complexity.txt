@@ -1,3 +1,7 @@
-TASK 01
+TASK 0
 
-The complexity is O(1) since every time we need to get 1 item from the lists.
+The complexity is O(1) since we need to get 1 item from the lists.
+
+TASK 1
+
+The complexity is O(n) since we need to iterate through all the items in the lists.
